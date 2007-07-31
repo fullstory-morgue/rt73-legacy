@@ -1,0 +1,16 @@
+.TH RT73-FWCUTTER "1" "JULY 2007" "rt73-fwcutter" "User Commands"
+.SH NAME
+rt73-fwcutter \- extract firmware from Ralink rt73 drivers
+.SH SYNOPSIS
+.B rt73-fwcutter
+[\fIOPTION\fR] [\fIDRIVER\fR]
+.SH DESCRIPTION
+rt73-fwcutter can extract the firmware for your Ralink rt73 hardware from different closed source drivers. The rt73 driver depends on this firmware files and can't work without them.
+.PP
+Example:
+.IP
+rt73-fwcutter RT71W_Firmware_V1.8.zip
+.PP
+to cut the firmware out of RT71W_Firmware_V1.8.zip.
+.SH AUTHORS
+Stefan Lippers-Hollmann <s.l-h@gmx.de>, modelled after bcm43xx-fwcutter

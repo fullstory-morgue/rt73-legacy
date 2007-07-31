@@ -1,0 +1,24 @@
+Source: rt73-legacy
+Section: contrib/net
+Priority: optional
+Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Build-Depends: debhelper (>= 5.0.37), bzip2
+Standards-Version: 3.7.2
+
+Package: rt73-legacy-modules-_KVERS_
+Architecture: any
+Depends: linux-image-_KVERS_
+Recommends: rt73-legacy-firmware
+Provides: rt73-legacy-modules
+Conflicts: rt73-module-_KVERS_, rt73-common
+Description: rt73-legacy modules for Linux (kernel _KVERS_)
+ This package contains the set of loadable kernel module for the
+ rt73 driver for Ralink wireless pci chipsets.
+ .
+ This package contains the compiled kernel modules for _KVERS_
+ .
+ If you have compiled your own kernel, you will most likely need to build
+ your own rt73-legacy-modules. The rt73-legacy-source package has been
+ provided for use with the Debian's module-assistant or kernel-package
+ utilities to produce a version of rt73-legacy-module for your kernel.
+

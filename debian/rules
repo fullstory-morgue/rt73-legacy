@@ -1,0 +1,58 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+#include /usr/share/cdbs/1/rules/dpatch.mk
+
+DEB_INSTALL_CHANGELOGS_ALL := CHANGELOG
+
+# upstream major version
+UPVERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: \(\w\+\.\w\+\.\w\+\).*/\1/p')
+# upstream CVS version
+DATE := $(shell date +%Y%m%d)
+# dfsg version
+DFSG := dfsg.1
+
+install/rt73-legacy-source::
+	# Enforce executable bit on debian/rules, and create directory 
+	# structure for modules source
+	install -D -m 0755 debian/rules.modules \
+		debian/tmp/modules/rt73-legacy/debian/rules
+	
+	# Prepare the other debian stuff
+	for f in *.modules.in control compat copyright changelog; do \
+		install -m 0644 debian/$$f debian/tmp/modules/rt73-legacy/debian/; \
+	done
+	
+	# Prepare upstream source
+	install -m 0644 Module/Makefile Module/*.[ch] \
+		debian/tmp/modules/rt73-legacy/
+		
+	# Prepare the debian source tarball
+	tar jcf debian/rt73-legacy-source/usr/src/rt73-legacy.tar.bz2 \
+		-C debian/tmp modules
+
+install/rt73-fwcutter::
+	install -m 0755	debian/rt73-fwcutter.sh \
+			debian/rt73-fwcutter/usr/bin/rt73-fwcutter
+	install -m 0755	debian/install_rt73_firmware.sh \
+			debian/rt73-fwcutter/usr/share/rt73-fwcutter/
+
+upstream:
+	@rm -rf ../rt73-legacy-$(DATE) ../rt73-legacy_$(UPVERSION).$(DFSG)+cvs$(DATE).orig.tar.gz
+	cd .. && cvs -z3 -d:pserver:anonymous@rt2400.cvs.sourceforge.net:/cvsroot/rt2400 \
+		export -d rt73-legacy-$(DATE) -D $(DATE) source/rt73/
+	@test -d ../rt73-legacy-$(DATE)
+	tar zcf ../rt73-legacy_$(UPVERSION).$(DFSG)+cvs$(DATE).orig.tar.gz \
+		--exclude='*.bin' --exclude='WPA_Supplicant' -C .. rt73-legacy-$(DATE)
+	if [ -x /usr/bin/diff ] && [ -x /usr/bin/diffstat ]; then \
+		diff	-Nrup \
+			--exclude=debian \
+			--exclude=*.svn \
+			--exclude=*.bin \
+			--exclude=WPA_Supplicant \
+				$(CURDIR)/ ../rt73-legacy-$(DATE)/ | diffstat -p2; \
+	fi
+	@rm -rf ../rt73-legacy-$(DATE)
+	@echo "Don't forget to update your upstream with " \
+		"../rt73-legacy_$(UPVERSION).$(DFSG)+cvs$(DATE).orig.tar.gz"
+

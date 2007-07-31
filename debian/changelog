@@ -1,0 +1,39 @@
+rt73-legacy (0.0.0.dfsg.1+cvs20070731-1) unstable; urgency=low
+
+  * New upstream snapshot:
+    - Change debug handling to conform with rt2500/rt2570 drivers.
+    - Forward compatibility with kernel 2.6.22-rc4 xxx_net_device
+      macros.
+    - msleep & co. for selected pre- 2.4.29 kernels (InsaneBoarder234 problem).
+    - Forward compatibility with kernel 2.6.22-rc4 skbuff changes. Put all
+      version compatibility macros in rt_config.h.
+    - Remove cruft (again).
+    - Fix default Makefile target.
+  * sync up with intermediate rt61 changes, add upstream target with diffstat
+    support.
+  * fix firmware download URL.
+  * add rt73-fwcutter manpage.
+  * add documentation.
+  * adapt maintainer scripts.
+  * adapt debconf configuration for rt73-fwcutter.
+  * add german translation.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 31 Jul 2007 13:14:22 +0200
+
+rt73-legacy (0.0.0.dfsg.1+cvs20070501-1) unstable; urgency=low
+
+  * New upstream snapshot:
+    - Fixes for iwlist freq output
+    - Integration into kernel firmware loading framework
+    - Removal of hardcoded backup firmware
+  * better safe than sorry and proactively prune the potentially to be added
+    unlicensed wpasupplicant support code.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 01 May 2007 15:07:51 +0200
+
+rt73-legacy (0.0.0.dfsg.1+cvs20070414-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 14 Apr 2007 21:04:25 +0200
+
