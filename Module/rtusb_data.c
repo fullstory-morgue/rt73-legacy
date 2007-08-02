@@ -2910,7 +2910,7 @@ NDIS_STATUS	RTMPCheckRxDescriptor(
 	}
 
 	// Drop ToDs promiscous frame, it is opened due to CCX 2 channel load statistics
-	if (pHeader->FC.ToDs)
+	if (pHeader->FC.ToDs && pAd->PortCfg.BssType != BSS_MONITOR)		//Don't drop to_ds frame if in monitor mode
 		return(NDIS_STATUS_FAILURE);
 
 	// Paul 04-03 for OFDM Rx length issue
@@ -3435,4 +3435,3 @@ BOOLEAN 	RTMPCheckDHCPFrame(
 
 	return FALSE;
 }
-
