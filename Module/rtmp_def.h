@@ -822,6 +822,8 @@ typedef UCHAR ADDRESS[MAC_ADDRESS_LENGTH];
  /* ASUS */\
  {USB_DEVICE(0x0b05,0x1723)},\
  {USB_DEVICE(0x0b05,0x1724)},\
+ /* Buffalo */\                                                                                                                     
+ {USB_DEVICE(0x0411,0x00f4)},\
  /* Belkin */\
  {USB_DEVICE(0x050d,0x7050)},\
  {USB_DEVICE(0x050d,0x705a)},\
