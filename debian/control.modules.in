@@ -8,7 +8,7 @@ Standards-Version: 3.7.2
 Package: rt73-legacy-modules-_KVERS_
 Architecture: any
 Depends: linux-image-_KVERS_
-Recommends: rt73-legacy-firmware
+Recommends: rt73-fwcutter
 Provides: rt73-legacy-modules
 Conflicts: rt73-module-_KVERS_, rt73-common
 Description: rt73-legacy modules for Linux (kernel _KVERS_)
