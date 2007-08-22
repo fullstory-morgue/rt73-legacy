@@ -757,8 +757,10 @@ NDIS_STATUS	RTMPInitAdapterBlock(
 		RTUSBInitializeCmdQ(&pAd->CmdQ);
 
 		init_MUTEX(&(pAd->usbdev_semaphore));
-		init_MUTEX_LOCKED(&(pAd->mlme_semaphore));
-		init_MUTEX_LOCKED(&(pAd->RTUSBCmd_semaphore));
+		init_MUTEX(&(pAd->mlme_semaphore));
+		down(&pAd->mlme_semaphore);
+		init_MUTEX(&(pAd->RTUSBCmd_semaphore));
+		down(&pAd->RTUSBCmd_semaphore);
 
 		init_completion (&pAd->notify); 	// event initially non-signalled
 
