@@ -23,6 +23,10 @@
  Changelog for 802.11g rt73 driver
 
  Version: CVS
+	* Fix 2.6 compile problem w/prev patch. Discovery/diagnosis/resolution
+	  by xqterry.
+	* Fix Bug #1763773 - does not build on 2.6.5. Needed for early 2.6
+	  series kernels.
 	* Change debug handling to conform with rt2500/rt2570 drivers.
 	* Forward compatibility with kernel 2.6.22-rc4 xxx_net_device macros.
 	* msleep & co. for selected pre- 2.4.29 kernels (InsaneBoarder234 problem).
