@@ -31,12 +31,6 @@ install/rt73-legacy-source::
 	tar jcf debian/rt73-legacy-source/usr/src/rt73-legacy.tar.bz2 \
 		-C debian/tmp modules
 
-install/rt73-fwcutter::
-	install -m 0755	debian/rt73-fwcutter.sh \
-			debian/rt73-fwcutter/usr/bin/rt73-fwcutter
-	install -m 0755	debian/install_rt73_firmware.sh \
-			debian/rt73-fwcutter/usr/share/rt73-fwcutter/
-
 upstream:
 	@rm -rf ../rt73-legacy-$(DATE) ../rt73-legacy_$(UPVERSION).$(DFSG)+cvs$(DATE).orig.tar.gz
 	cd .. && cvs -z3 -d:pserver:anonymous@rt2400.cvs.sourceforge.net:/cvsroot/rt2400 \

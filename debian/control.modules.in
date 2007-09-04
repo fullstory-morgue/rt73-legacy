@@ -1,5 +1,5 @@
 Source: rt73-legacy
-Section: contrib/net
+Section: net
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
 Build-Depends: debhelper (>= 5.0.37), bzip2
@@ -8,7 +8,7 @@ Standards-Version: 3.7.2
 Package: rt73-legacy-modules-_KVERS_
 Architecture: any
 Depends: linux-image-_KVERS_
-Recommends: rt73-fwcutter
+Suggests: rt73-fwcutter
 Provides: rt73-legacy-modules
 Conflicts: rt73-module-_KVERS_, rt73-common
 Description: rt73-legacy modules for Linux (kernel _KVERS_)

@@ -1,8 +1,14 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20070822-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20070904-1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream release:
+    - Fix vendor and product endian conversion in probe. Patch by chris_ppc
+      extended to 2.4 conditional compile path.
+  * strip out rt61-fwcutter into the new source package ralink-fwcutter.
+  * move package to main.
+  * only suggest rt73-fwcutter, packages in main must not recommend non-free
+    parts.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 22 Aug 2007 15:43:34 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 04 Sep 2007 12:52:19 +0200
 
 rt73-legacy (0.0.0.dfsg.1+cvs20070822-1) unstable; urgency=low
 

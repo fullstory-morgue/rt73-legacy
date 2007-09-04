@@ -1776,12 +1776,12 @@ static void *usb_rtusb_probe(struct usb_device *dev, UINT interface,
 
 	for (i = 0; i < rtusb_usb_id_len; i++)
 	{
-		if (le32_to_cpu(dev->descriptor.idVendor) == rtusb_usb_id[i].idVendor &&
-			le32_to_cpu(dev->descriptor.idProduct) == rtusb_usb_id[i].idProduct)
+		if (le16_to_cpu(dev->descriptor.idVendor) == rtusb_usb_id[i].idVendor &&
+			le16_to_cpu(dev->descriptor.idProduct) == rtusb_usb_id[i].idProduct)
 		{
 			printk("idVendor = 0x%x, idProduct = 0x%x \n",
-					le32_to_cpu(dev->descriptor.idVendor),
-					le32_to_cpu(dev->descriptor.idProduct));
+					le16_to_cpu(dev->descriptor.idVendor),
+					le16_to_cpu(dev->descriptor.idProduct));
 			break;
 		}
 	}
@@ -2105,12 +2105,12 @@ static int usb_rtusb_probe (struct usb_interface *intf,
 	usb_get_dev(dev);
 	for (i = 0; i < rtusb_usb_id_len; i++)
 	{
-		if (le32_to_cpu(dev->descriptor.idVendor) == rtusb_usb_id[i].idVendor &&
-			le32_to_cpu(dev->descriptor.idProduct) == rtusb_usb_id[i].idProduct)
+		if (le16_to_cpu(dev->descriptor.idVendor) == rtusb_usb_id[i].idVendor &&
+			le16_to_cpu(dev->descriptor.idProduct) == rtusb_usb_id[i].idProduct)
 		{
 			printk("idVendor = 0x%x, idProduct = 0x%x \n",
-					le32_to_cpu(dev->descriptor.idVendor),
-					le32_to_cpu(dev->descriptor.idProduct));
+					le16_to_cpu(dev->descriptor.idVendor),
+					le16_to_cpu(dev->descriptor.idProduct));
 			break;
 		}
 	}

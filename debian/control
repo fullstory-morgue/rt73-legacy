@@ -1,5 +1,5 @@
 Source: rt73-legacy
-Section: contrib/net
+Section: net
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
 Build-Depends: cdbs, debhelper (>= 5.0.37), bzip2
@@ -12,12 +12,3 @@ Description: source for the serialmonkey rt73-legacy driver
  This package provides the source code for the rt73-legacy kernel module.
  The rt73-legacy package is also required in order to make use of these
  module. Kernel source or headers are required to compile these modules.
-
-Package: rt73-fwcutter
-Architecture: all
-Provides: rt73-firmware
-Depends: debconf (>= 0.5.00) | debconf-2.0, udev, wget | curl, unp, unzip
-Description: Utility for extracting Ralink rt73 firmware
- rt73-fwcutter is a tool which can extract firmware from Ralink rt73 or 
- rt2x00 rt73 source files. It's written for Ralink rt73-legacy driver files.
-

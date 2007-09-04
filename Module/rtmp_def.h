@@ -861,6 +861,7 @@ typedef UCHAR ADDRESS[MAC_ADDRESS_LENGTH];
  /* Qcom */\
  {USB_DEVICE(0x18e8,0x6196)},\
  {USB_DEVICE(0x18e8,0x6229)},\
+ {USB_DEVICE(0x18e8,0x6238)},\
  /* Sitecom */\
  {USB_DEVICE(0x0df6,0x9712)},\
  {USB_DEVICE(0x0df6,0x90ac)},\
