@@ -870,6 +870,8 @@ typedef UCHAR ADDRESS[MAC_ADDRESS_LENGTH];
  /* Planex */\
  {USB_DEVICE(0x2019,0xab01)},\
  {USB_DEVICE(0x2019,0xab50)},\
+ /* Senao */\
+ {USB_DEVICE(0x1740,0x7100)},\
  {USB_DEVICE(0,0)}} /* end marker */
 
 
