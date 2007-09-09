@@ -1,8 +1,9 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20070904-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20070910-1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream snapshot:
+    - add USB ID for 0x1740 0x7100.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 04 Sep 2007 12:58:06 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 10 Sep 2007 00:39:42 +0200
 
 rt73-legacy (0.0.0.dfsg.1+cvs20070904-1) unstable; urgency=low
 
