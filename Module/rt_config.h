@@ -185,7 +185,6 @@ typedef union _LARGE_INTEGER {
 //
 //	Miniport defined header files
 //
-#include	"rt2x00debug.h"
 #include	"rtmp_type.h"
 #include	"rtmp_def.h"
 #include    "oid.h"
@@ -193,7 +192,7 @@ typedef union _LARGE_INTEGER {
 #include    "md5.h"
 #include    "wpa.h"
 #include	"rtmp.h"
-
+#include	"rt2x00debug.h"
 
 #define MEM_ALLOC_FLAG      (GFP_DMA | GFP_ATOMIC)
 

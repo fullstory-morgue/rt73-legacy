@@ -1,9 +1,17 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20070910-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20070917-1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream release:
+    - Fix vendor and product endian conversion in probe function. Patch by
+      chris_ppc extended to 2.4 conditional compile path.
+    - Add an ID (got on the forum:
+      http://rt2x00.serialmonkey.com/phpBB2/viewtopic.php?p=25925#25925).
+    - Add an ID.
+    - Add debugfs capabilities.
+    - Don't compile debugfs when disabled.
+    - new USB id.
   * add VCS control headers.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Sep 2007 20:20:45 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 17 Sep 2007 14:35:28 +0200
 
 rt73-legacy (0.0.0.dfsg.1+cvs20070910-1) unstable; urgency=low
 

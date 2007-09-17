@@ -1347,7 +1347,6 @@ typedef struct _RTMP_ADAPTER
 	struct usb_config_descriptor	*config;
 	devctrlrequest					*devreq;
 
-	struct rt2x00debug debug;
 	INT	EAPOLVer;
 
 	/* The device we're working with
