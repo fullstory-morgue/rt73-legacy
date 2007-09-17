@@ -822,7 +822,7 @@ typedef UCHAR ADDRESS[MAC_ADDRESS_LENGTH];
  /* ASUS */\
  {USB_DEVICE(0x0b05,0x1723)},\
  {USB_DEVICE(0x0b05,0x1724)},\
- /* Buffalo */\                                                                                                                     
+ /* Buffalo */\
  {USB_DEVICE(0x0411,0x00f4)},\
  /* Belkin */\
  {USB_DEVICE(0x050d,0x7050)},\
@@ -853,6 +853,7 @@ typedef UCHAR ADDRESS[MAC_ADDRESS_LENGTH];
  {USB_DEVICE(0x13b1,0x0023)},\
  /* MSI */\
  {USB_DEVICE(0x0db0,0x6877)},\
+ {USB_DEVICE(0x0db0,0x6874)},\
  {USB_DEVICE(0x0db0,0xa861)},\
  {USB_DEVICE(0x0db0,0xa874)},\
  /* Ralink */\

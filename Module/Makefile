@@ -56,7 +56,7 @@ endif
 $(MODULE_NAME)-objs :=  rtmp_main.o mlme.o connect.o rtusb_bulk.o rtusb_io.o \
 			sync.o assoc.o auth.o auth_rsp.o rtusb_data.o \
 			rtmp_init.o  sanity.o rtmp_wep.o rtmp_info.o \
-			rtmp_tkip.o wpa.o md5.o
+			rtmp_tkip.o wpa.o md5.o rt2x00debug.o
 
 ifdef TOPDIR
 obj-m += $(MODULE_NAME).o
