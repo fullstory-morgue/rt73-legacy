@@ -828,6 +828,7 @@ typedef UCHAR ADDRESS[MAC_ADDRESS_LENGTH];
  {USB_DEVICE(0x050d,0x7050)},\
  {USB_DEVICE(0x050d,0x705a)},\
  {USB_DEVICE(0x050d,0x905b)},\
+ {USB_DEVICE(0x050d,0x905c)},\
  /* Billionton */\
  {USB_DEVICE(0x1631,0xc019)},\
  /* CNet */\

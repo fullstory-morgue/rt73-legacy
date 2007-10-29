@@ -1,9 +1,10 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20070917-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20071029-1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream release:
+    - add new USB ID 0x050d,0x905c.
   * update syntax for Vcs headers in debian/control
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 07 Oct 2007 14:46:34 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 29 Oct 2007 15:35:05 +0100
 
 rt73-legacy (0.0.0.dfsg.1+cvs20070917-1) unstable; urgency=low
 
