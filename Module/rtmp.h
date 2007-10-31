@@ -1079,8 +1079,7 @@ typedef struct _MLME_STRUCT {
 	ULONG					ChannelQuality;  // 0..100, Channel Quality Indication for Roaming
 	unsigned long				Now;			 // latch the value of NdisGetSystemUpTime()
 
-	BOOLEAN 				bRunning;
-	spinlock_t				TaskLock;
+	BOOLEAN 				Running;
 	MLME_QUEUE				Queue;
 
 	UINT					ShiftReg;
@@ -2088,9 +2087,12 @@ BOOLEAN MlmeEnqueueForRecv(
 	IN VOID *Msg,
 	IN UCHAR Signal);
 
+BOOLEAN MlmeGetHead(
+    IN MLME_QUEUE *Queue,
+    OUT MLME_QUEUE_ELEM **Elem);
+
 BOOLEAN MlmeDequeue(
-	IN MLME_QUEUE *Queue,
-	OUT MLME_QUEUE_ELEM **Elem);
+    IN MLME_QUEUE *Queue);
 
 VOID MlmeRestartStateMachine(
 	IN	PRTMP_ADAPTER	pAd);
