@@ -249,6 +249,11 @@ static inline void msleep(unsigned long msecs)
 #define rtusb_submit_urb(purb) usb_submit_urb(purb)
 #endif
 
+// 2.5.44? 2.5.26?
+#ifndef smp_read_barrier_depends
+#define smp_read_barrier_depends() ((void)0)
+#endif
+
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,7)
 #define RTUSB_UNLINK_URB(urb)	usb_kill_urb(urb)
 #else
