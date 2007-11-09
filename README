@@ -16,18 +16,37 @@ Build Instructions
     3. Install the driver (as root):
           # make install
 
-    4. Check your install (load module, bring interface up and scan):
-        # modprobe rt73 [debug=<mask>]
 
-        <mask> is a decimal or hex number. See TESTING file. Ignored
-        if driver compiled without debug support.
+====================
+INVOCATION
+====================
+Load the driver:
 
-        # ifconfig wlan0 up
-        # iwlist wlan0 scan
+    $ modprobe rt73 [ifname=<name>] [debug=<mask>] [firmName=<file>]
+
+    <name> is the name of the device and defaults to "wlan%d". If more
+    than one adapter is installed, successive devices will be named
+    wlan0, wlan1, etc. If you wish to use a different scheme - say
+    eth*, and there are already wired ethernet devices named eth0 and
+    eth1, then specifying <name> as "eth%d" gives the adapter the name
+    "eth2".
+
+    <mask> is a decimal or hex number. See TESTING file. Ignored if
+    driver compiled without debug support.
+
+    <file> is the name of a firmware file and defaults to "rt73.bin"
+    if omitted. Only the basename - not the full path - may be
+    specified.
+
+Start it up:
+
+    $ ifup wlan0        # If using Debian - or
+    $ ifconfig wlan0 up
+    $ iwlist wlan0 scan
 
 If everything is ok, you should see a list of surrounding Access
-Points. It means you can jump to the configuration section.
-Otherwise, check out the following install notes...
+Points. It means you can jump to the configuration section. Otherwise,
+check out the following install notes...
 
 _________
 NOTES:

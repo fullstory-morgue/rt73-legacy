@@ -38,16 +38,21 @@
 
 ULONG	RTDebugLevel = RT_DEBUG_OFF;
 static ULONG	debug = RT_DEBUG_OFF;
+static char *ifname = NULL;
 static char *firmName = RT2573_IMAGE_FILE_NAME;
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 MODULE_PARM(debug, "i");
+MODULE_PARM(ifname, "s");
+MODULE_PARM(firmName, "s");
 #else
 module_param(debug, int, 0);
+module_param(ifname, charp, 0444);
 module_param(firmName, charp, S_IRUGO );
 #endif
 
 MODULE_PARM_DESC(debug, "Debug mask: n selects filter, 0 for none");
+MODULE_PARM_DESC(ifname, "Network device name (default wlan%d)");
 MODULE_PARM_DESC(firmName, "Permit to load a different firmware: (default: rt73.bin) ");
 
 // Following information will be show when you run 'modinfo'
@@ -1464,7 +1469,8 @@ static int usb_rtusb_open(struct net_device *net_dev)
 
 	printk("rt73 driver version - %s\n", DRIVER_VERSION);
 	if ( !OPSTATUS_TEST_FLAG (pAd,fOP_STATUS_FIRMWARE_LOAD) ) {
-		DBGPRINT(RT_DEBUG_ERROR, "Firmware not load");
+		KPRINT(KERN_ERR, "Firmware not load\n");
+		DBGPRINT(RT_DEBUG_ERROR, "Firmware not loaded\n");
 		ret = -EIO;
 		goto out_firmware_error;
 	}
@@ -1840,15 +1846,20 @@ static void *usb_rtusb_probe(struct usb_device *dev, UINT interface,
         struct  usb_interface_descriptor *as;
         struct  usb_endpoint_descriptor *ep;
 
+    	if (ifname == NULL)
+			strcpy(netdev->name, "wlan%d");
+    	else
+			strncpy(netdev->name, ifname, IFNAMSIZ);
+
 		for (i = 0; i < 8; i++)
 		{
-			sprintf(slot_name, "wlan%d", i);
+			sprintf(slot_name, netdev->name, i);
 
 			read_lock_bh(&dev_base_lock); // avoid multiple init
 			for (device = first_net_device(); device != NULL;
 					device = next_net_device(device))
 			{
-				if (strncmp(device->name, slot_name, 4) == 0)
+				if (strncmp(device->name, slot_name, IFNAMSIZ) == 0)
 				{
 					break;
 				}
@@ -1863,8 +1874,8 @@ static void *usb_rtusb_probe(struct usb_device *dev, UINT interface,
 			goto out;
 		}
 
-		sprintf(netdev->name, "wlan%d", i);
-		DBGPRINT(RT_DEBUG_ERROR, "usb device name %s\n",netdev->name);
+		sprintf(netdev->name, slot_name, i);
+		DBGPRINT(RT_DEBUG_INFO, "usb device name %s\n",netdev->name);
 
         /* get Max Packet Size from usb_dev endpoint */
 //        ifp = dev->actconfig->interface + i;
@@ -1884,6 +1895,12 @@ static void *usb_rtusb_probe(struct usb_device *dev, UINT interface,
 	res = register_netdev(netdev);
 	if (res) {
 		printk("register_netdev failed err=%d\n",res);
+		goto out;
+	}
+
+	res = LoadFirmware(pAd, firmName);
+	if (res) {
+		DBGPRINT(RT_DEBUG_ERROR, "Failed to request Firmware.\n");
 		goto out;
 	}
 
@@ -1932,7 +1949,7 @@ static void usb_rtusb_disconnect(struct usb_device *dev, void *ptr)
 
 }
 
-#else
+#else	// Kernel version > 2.5.0
 static int usb_rtusb_close(struct net_device *net_dev)
 {
 	PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) net_dev->priv;
@@ -2174,10 +2191,14 @@ static int usb_rtusb_probe (struct usb_interface *intf,
         struct  usb_host_interface *iface_desc;
         struct  usb_endpoint_descriptor *endpoint;
 
+    	if (ifname == NULL)
+			strcpy(pAd->net_dev->name, "wlan%d");
+    	else
+			strncpy(pAd->net_dev->name, ifname, IFNAMSIZ);
 
 		for (i = 0; i < 8; i++)
 		{
-			sprintf(slot_name, "wlan%d", i);
+			sprintf(slot_name, pAd->net_dev->name, i);
 
 #if 1
 			if(dev_get_by_name(slot_name)==NULL)
@@ -2187,7 +2208,7 @@ static int usb_rtusb_probe (struct usb_interface *intf,
 			for (device = first_net_device(); device != NULL;
 					device = next_net_device(device))
 			{
-				if (strncmp(device->name, slot_name, 4) == 0)
+				if (strncmp(device->name, slot_name, IFNAMSIZ) == 0)
 				{
 					break;
 				}
@@ -2203,7 +2224,7 @@ static int usb_rtusb_probe (struct usb_interface *intf,
 			return res;
 		}
 
-		sprintf(pAd->net_dev->name, "wlan%d", i);
+		sprintf(pAd->net_dev->name, slot_name, i);
 		DBGPRINT(RT_DEBUG_ERROR, "usb device name %s\n", pAd->net_dev->name);
 
 
@@ -2289,7 +2310,7 @@ static void usb_rtusb_disconnect(struct usb_interface *intf)
 	DBGPRINT(RT_DEBUG_ERROR,"<=== RTUSB disconnect successfully\n");
 
 }
-#endif
+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0) */
 
 
 //
