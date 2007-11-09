@@ -23,6 +23,9 @@
  Changelog for 802.11g rt73 driver
 
  Version: CVS
+	* Provide interface name module option parameter.
+	* Load firmware for 2.4 kernels. Patch by Graham Gower.
+	  Back out problem queue element, multi-context changes till fixed.
 	* Propagate incomplete queue element, multi- context service drop fixes.
 	  Patch by Ben Hutchings.
 	* Fix vendor and product endian conversion in probe. Patch by chris_ppc

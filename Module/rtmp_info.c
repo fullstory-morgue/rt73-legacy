@@ -902,7 +902,7 @@ int rt_ioctl_siwessid(struct net_device *dev,
 	else
 	{
 		Ssid.SsidLength = 0;  // ANY ssid
-        memcpy(Ssid.Ssid, "", 0);
+		Ssid.Ssid[0] = 0;
 
 		// reset to infra/open/none as the user set ANY ssid
         // $ iwconfig [interface] essid ""
@@ -1471,7 +1471,7 @@ INT RTMPSetInformation(
 					// reset SSID to null
 					if (pSsid->SsidLength == 0)
 					{
-						memcpy(pSsid->Ssid, "", 0);
+						Ssid.Ssid[0] = 0;
 					}
 
 					RTUSBEnqueueCmdFromNdis(pAdapter, OID_802_11_SSID, TRUE, pSsid, sizeof(NDIS_802_11_SSID));
@@ -2774,7 +2774,7 @@ INT rt73_ioctl(
 			else
 			{
 				Ssid.SsidLength = 0;  // ANY ssid
-				memcpy(pSsid->Ssid, "", 0);
+				Ssid.Ssid[0] = 0;
 			}
 			pSsid = &Ssid;
 			if (pAd->Mlme.CntlMachine.CurrState != CNTL_IDLE)
@@ -3969,7 +3969,7 @@ INT Set_SSID_Proc(
 		else
 		{
 			Ssid.SsidLength = 0; //ANY ssid
-            memcpy(Ssid.Ssid, "", 0);
+			Ssid.Ssid[0] = 0;
 
 			// reset to infra/open/none as the user sets ANY ssid
             // $ iwpriv [interface] set SSID=""
@@ -5871,6 +5871,7 @@ INT RTMPIoctlSetWpapsk(
 		return TRUE;	// do nothing
 
 	Status = copy_from_user(arg, wrq->u.data.pointer, wrq->u.data.length);
+	arg[wrq->u.data.length] = 0;
 
 	memset(keyMaterial, 0, 40);
 

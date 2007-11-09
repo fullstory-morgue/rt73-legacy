@@ -125,6 +125,8 @@ typedef struct usb_ctrlrequest devctrlrequest;
 typedef LONG		NTSTATUS;
 typedef NTSTATUS	*PNTSTATUS;
 
+#define KPRINT(Level, fmt, args...) \
+	printk(Level DRIVER_NAME ": " fmt, ## args)
 //
 //	Macro for debugging information
 //
@@ -1079,7 +1081,8 @@ typedef struct _MLME_STRUCT {
 	ULONG					ChannelQuality;  // 0..100, Channel Quality Indication for Roaming
 	unsigned long				Now;			 // latch the value of NdisGetSystemUpTime()
 
-	BOOLEAN 				Running;
+	BOOLEAN 				bRunning;
+	spinlock_t				TaskLock;
 	MLME_QUEUE				Queue;
 
 	UINT					ShiftReg;
@@ -2087,12 +2090,9 @@ BOOLEAN MlmeEnqueueForRecv(
 	IN VOID *Msg,
 	IN UCHAR Signal);
 
-BOOLEAN MlmeGetHead(
-    IN MLME_QUEUE *Queue,
-    OUT MLME_QUEUE_ELEM **Elem);
-
 BOOLEAN MlmeDequeue(
-    IN MLME_QUEUE *Queue);
+	IN MLME_QUEUE *Queue,
+	OUT MLME_QUEUE_ELEM **Elem);
 
 VOID MlmeRestartStateMachine(
 	IN	PRTMP_ADAPTER	pAd);

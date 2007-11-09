@@ -944,7 +944,7 @@ VOID NICReadEEPROMParameters(
 		else
 			pAd->TxPower[i].Power = ChannelTxPower[i];
 
-		DBGPRINT_RAW(RT_DEBUG_INFO, "Tx power for channel %d : %0x\n", pAd->TxPower[i].Channel, pAd->TxPower[i].Power);
+		DBGPRINT(RT_DEBUG_INFO, "Tx power for channel %d : 0x%02x\n", pAd->TxPower[i].Channel, (UCHAR)(pAd->TxPower[i].Power));
 	}
 
 	// 1. UNI 36 - 64, HipperLAN 2 100 - 140, UNI 140 - 165
@@ -956,7 +956,7 @@ VOID NICReadEEPROMParameters(
 			pAd->TxPower[i + 14].Power = 24;
 		else
 			pAd->TxPower[i + 14].Power = ChannelTxPower[i];
-		DBGPRINT_RAW(RT_DEBUG_INFO, "Tx power for channel %d : %0x\n", pAd->TxPower[i + 14].Channel, pAd->TxPower[i + 14].Power);
+		DBGPRINT(RT_DEBUG_INFO, "Tx power for channel %d : 0x%02x\n", pAd->TxPower[i + 14].Channel, (UCHAR)(pAd->TxPower[i + 14].Power));
 	}
 
 	//
