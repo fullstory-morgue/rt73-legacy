@@ -268,6 +268,11 @@ static inline void msleep(unsigned long msecs)
 
 #endif
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24))
+#define SET_MODULE_OWNER(some_struct) do { } while (0)
+#define dev_get_by_name(slot_name) dev_get_by_name(&init_net, slot_name)
+#endif
+
 #ifndef USB_ST_NOERROR
 #define  USB_ST_NOERROR     0
 #endif

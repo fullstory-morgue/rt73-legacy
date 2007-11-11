@@ -2175,7 +2175,7 @@ static int usb_rtusb_probe (struct usb_interface *intf,
 	netdev->hard_header_len = 14;
 	netdev->mtu = 1500;
 	netdev->addr_len = 6;
-	netdev->weight = 64;
+	//netdev->weight = 64;	// Used only for poll. N/A in 2.6.24 - bb
 
 	OPSTATUS_CLEAR_FLAG(pAd, fOP_STATUS_MEDIA_STATE_CONNECTED);
 

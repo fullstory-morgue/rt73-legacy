@@ -874,7 +874,7 @@ typedef UCHAR ADDRESS[MAC_ADDRESS_LENGTH];
  {USB_DEVICE(0x2019,0xab50)},\
  /* Senao */\
  {USB_DEVICE(0x1740,0x7100)},\
- {USB_DEVICE(0,0)}} /* end marker */
+ {0}} /* end marker */
 
 
 #endif	// __RTMP_DEF_H__

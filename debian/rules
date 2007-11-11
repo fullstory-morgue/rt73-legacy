@@ -36,7 +36,7 @@ upstream:
 	cd .. && cvs -z3 -d:pserver:anonymous@rt2400.cvs.sourceforge.net:/cvsroot/rt2400 \
 		export -d rt73-legacy-$(DATE) -D $(DATE) source/rt73/
 	@test -d ../rt73-legacy-$(DATE)
-	tar zcf ../rt73-legacy_$(UPVERSION).$(DFSG)+cvs$(DATE).orig.tar.gz \
+	tar -czf ../rt73-legacy_$(UPVERSION).$(DFSG)+cvs$(DATE).orig.tar.gz \
 		--exclude='*.bin' --exclude='WPA_Supplicant' -C .. rt73-legacy-$(DATE)
 	if [ -x /usr/bin/diff ] && [ -x /usr/bin/diffstat ]; then \
 		diff	-Nrup \
