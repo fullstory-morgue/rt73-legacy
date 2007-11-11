@@ -239,6 +239,7 @@ NDIS_STATUS MlmeInit(
 
 	do
 	{
+		pAd->Mlme.Running = FALSE;
 		Status = MlmeQueueInit(&pAd->Mlme.Queue);
 		if(Status != NDIS_STATUS_SUCCESS)
 			break;
@@ -251,9 +252,6 @@ NDIS_STATUS MlmeInit(
 			MlmeQueueDestroy(&pAd->Mlme.Queue);
 			break;
 		}
-
-		pAd->Mlme.bRunning = FALSE;
-		NdisAllocateSpinLock(&pAd->Mlme.TaskLock);
 
 		// initialize table
 		BssTableInit(&pAd->ScanTab);
@@ -306,7 +304,6 @@ NDIS_STATUS MlmeInit(
 	Note:
 		This function is invoked from MPSetInformation and MPReceive;
 		This task guarantee only one MlmeHandler will run.
-
 	==========================================================================
  */
 VOID MlmeHandler(
@@ -315,57 +312,39 @@ VOID MlmeHandler(
 	MLME_QUEUE_ELEM	*Elem = NULL;
 	unsigned long			IrqFlags;
 
-	// Only accept MLME and Frame from peer side, no other (control/data) frame should
-	// get into this state machine
-	NdisAcquireSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
+	// Only accept MLME and Frame from peer side, no other (control/data)
+	// frame should get into this state machine
 
-
-	if(pAd->Mlme.bRunning)
+	// We fix the multiple context service drop problem identified by
+	// Ben Hutchings in an SMP- safe way by combining TaskLock and Queue.Lock
+	// per his suggestion.
+	NdisAcquireSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
+	if(pAd->Mlme.Running)
 	{
-		NdisReleaseSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
+		NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
 		return;
 	}
-	else
-	{
-		pAd->Mlme.bRunning = TRUE;
-	}
+	pAd->Mlme.Running = TRUE;
 
-	NdisReleaseSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
-
-
-	while (TRUE) {
-		if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_MLME_RESET_IN_PROGRESS) ||
-			RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS) ||
-			RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST))
-		{
-			DBGPRINT(RT_DEBUG_TRACE, "Device Halted or Removed or MlmeRest, exit MlmeHandler! (queue num = %d)\n", pAd->Mlme.Queue.Num);
-			break;
-		}
-
-		NdisAcquireSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
-		if (!MlmeDequeue(&pAd->Mlme.Queue, &Elem)) {
-			NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
-			break;
-		}
-		NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
-
-		//From message type, determine which state machine I should drive
-		if (pAd->PortCfg.BssType == BSS_MONITOR)
-			continue;
+	// If there's a bubble, wait for it to collapse before proceeding.
+    while (MlmeGetHead(&pAd->Mlme.Queue, &Elem)) {
+		smp_read_barrier_depends();
+		if (!Elem->Occupied) break;
 
 		if (Elem->MsgType == RT_CMD_RESET_MLME)
 		{
-			DBGPRINT_RAW(RT_DEBUG_TRACE, "!!! reset MLME state machine !!!\n");
+			DBGPRINT(RT_DEBUG_TRACE, "!!! reset MLME state machine !!!\n");
 			MlmeRestartStateMachine(pAd);
 			MlmePostRestartStateMachine(pAd);
+        	smp_mb();
 			Elem->Occupied = FALSE;
-			Elem->MsgLen = 0;
+			MlmeDequeue(&pAd->Mlme.Queue);
 			continue;
 		}
+		NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
 
-
-		// if dequeue success
-		switch (Elem->Machine)
+        //From message type, determine which state machine I should drive
+        if (pAd->PortCfg.BssType != BSS_MONITOR) switch (Elem->Machine)
 		{
 			case ASSOC_STATE_MACHINE:
 				StateMachinePerformAction(pAd, &pAd->Mlme.AssocMachine, Elem);
@@ -391,14 +370,13 @@ VOID MlmeHandler(
 		} // end of switch
 
 		// free MLME element
-		Elem->Occupied = FALSE;
-		Elem->MsgLen = 0;
+        smp_mb();
+        Elem->Occupied = FALSE;	// sic - bb
+		NdisAcquireSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
+		MlmeDequeue(&pAd->Mlme.Queue);
 	}
-
-	NdisAcquireSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
-	pAd->Mlme.bRunning = FALSE;
-	NdisReleaseSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
-
+	pAd->Mlme.Running = FALSE;
+	NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
 }
 
 /*
@@ -432,7 +410,6 @@ VOID MlmeHalt(
 	RTMPusecDelay(500000);	  // 0.5 sec to guarantee timer canceled
 
 	MlmeQueueDestroy(&pAd->Mlme.Queue);
-	NdisFreeSpinLock(&pAd->Mlme.TaskLock);
 
 	MlmeFreeMemoryHandler(pAd); //Free MLME memory handler
 
@@ -458,10 +435,10 @@ VOID MlmeSuspend(
 
 	while (TRUE)
 	{
-		NdisAcquireSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
-		if(pAd->Mlme.bRunning)
+		NdisAcquireSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
+		if(pAd->Mlme.Running)
 		{
-			NdisReleaseSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
+			NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
 			if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS))
 				return;
 
@@ -469,25 +446,25 @@ VOID MlmeSuspend(
 		}
 		else
 		{
-			pAd->Mlme.bRunning = TRUE;
-			NdisReleaseSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
+			pAd->Mlme.Running = TRUE;
+			NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
 			break;
 		}
 	}
 
 	// Remove all Mlme queues elements
 	NdisAcquireSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
-	while (MlmeDequeue(&pAd->Mlme.Queue, &Elem)) {
+	while (MlmeGetHead(&pAd->Mlme.Queue, &Elem)) {
 		// free MLME element
+		MlmeDequeue(&pAd->Mlme.Queue);
 		Elem->Occupied = FALSE;
-		Elem->MsgLen = 0;
 	}
 	NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
 
 	// Remove running state
-	NdisAcquireSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
-	pAd->Mlme.bRunning = FALSE;
-	NdisReleaseSpinLock(&pAd->Mlme.TaskLock, IrqFlags);
+	NdisAcquireSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
+	pAd->Mlme.Running = FALSE;
+	NdisReleaseSpinLock(&pAd->Mlme.Queue.Lock, IrqFlags);
 
 	RTUSBCleanUpMLMEWaitQueue(pAd);
 	RTUSBCleanUpMLMEBulkOutQueue(pAd);
@@ -547,6 +524,7 @@ VOID MlmeResume(
 
 #define ADHOC_BEACON_LOST_TIME		(10*HZ)  // 4 sec
 
+// interrupt context (timer handler)
 VOID MlmePeriodicExec(
 	IN	unsigned long data)
 {
@@ -651,6 +629,7 @@ VOID MlmePeriodicExec(
 
 }
 
+// process context
 VOID STAMlmePeriodicExec(
 	IN	PRTMP_ADAPTER pAd)
 {
@@ -3258,18 +3237,31 @@ BOOLEAN MlmeEnqueue(
 			DBGPRINT_ERR("MlmeEnqueue: full, msg dropped and may corrupt MLME\n");
 			return FALSE;
 		}
+		// If another context preempts us, it uses the next element - sic. bb
 		Tail = Queue->Tail++;
 		Queue->Tail %= MAX_LEN_OF_MLME_QUEUE;
 		Queue->Num++;
-		NdisReleaseSpinLock(&Queue->Lock, IrqFlags);
 
-		Queue->Entry[Tail].Occupied = TRUE;
+	// We guard against Ben Hutchings' incomplete queue element problem by not
+	// setting the Occupied flag until the memcpy is done. The ocurrence of a
+	// refresh cycle during a copy can stretch the time by up to 100 usec
+	// (well, quite a few usec, anyway); not good when interrupts are disabled.
+	// Note that this can leave a bubble in the queue, but it will have
+	// disappeared by the time this thread gets around to calling MlmeHandler.
+	// All items will be handled in their proper order, but possibly not in the
+	// context in which they were added. - bb
+		NdisReleaseSpinLock(&Queue->Lock, IrqFlags);
+		DBGPRINT(RT_DEBUG_INFO, "MlmeEnqueue, num=%d\n",Queue->Num);
+
 		Queue->Entry[Tail].Machine = Machine;
 		Queue->Entry[Tail].MsgType = MsgType;
 		Queue->Entry[Tail].MsgLen  = MsgLen;
 		memcpy(Queue->Entry[Tail].Msg, Msg, MsgLen);
 
-		DBGPRINT(RT_DEBUG_INFO, "MlmeEnqueue, num=%d\n",Queue->Num);
+		//MlmeHandler will stop when it finds this false.
+    	smp_wmb();
+    	Queue->Entry[Tail].Occupied = TRUE;
+
 	}
 
 	return TRUE;
@@ -3331,7 +3323,6 @@ BOOLEAN MlmeEnqueueForRecv(
 		}
 	}
 
-
 	NdisAcquireSpinLock(&Queue->Lock, IrqFlags);
 	if (Queue->Num == MAX_LEN_OF_MLME_QUEUE) {
 		NdisReleaseSpinLock(&Queue->Lock, IrqFlags);
@@ -3345,7 +3336,7 @@ BOOLEAN MlmeEnqueueForRecv(
 	DBGPRINT(RT_DEBUG_INFO, "MlmeEnqueueForRecv, num=%d\n",Queue->Num);
 
 	// OK, we got all the informations, it is time to put things into queue
-	Queue->Entry[Tail].Occupied = TRUE;
+	// See MlmeEnqueue note for use of Occupied flag.
 	Queue->Entry[Tail].Machine = Machine;
 	Queue->Entry[Tail].MsgType = MsgType;
 	Queue->Entry[Tail].MsgLen  = MsgLen;
@@ -3354,40 +3345,55 @@ BOOLEAN MlmeEnqueueForRecv(
 	Queue->Entry[Tail].bReqIsFromNdis = FALSE;
 	Queue->Entry[Tail].Channel = pAd->LatchRfRegs.Channel;
 	memcpy(Queue->Entry[Tail].Msg, Msg, MsgLen);
+    smp_wmb();
+    Queue->Entry[Tail].Occupied = TRUE;
 
 	RTUSBMlmeUp(pAd);
 
 	return TRUE;
 }
 
-/*! \brief	 Dequeue a message from the MLME Queue
+/*! \brief   Get the first message from the MLME Queue
  * 			WARNING: Must be call with Mlme.Queue.Lock held
- *	\param	*Queue	  The MLME Queue
- *	\param	*Elem	  The message dequeued from MLME Queue
- *	\return  TRUE if the Elem contains something, FALSE otherwise
- *	\pre
- *	\post
+ *  \param  *Queue    The MLME Queue
+ *  \param  *Elem     The message dequeued from MLME Queue
+ *  \return  TRUE if the Elem contains something, FALSE otherwise
+ *  \pre
+ *  \post
+ */
+BOOLEAN MlmeGetHead(
+    IN MLME_QUEUE *Queue,
+    OUT MLME_QUEUE_ELEM **Elem)
+{
+    if (Queue->Num == 0)
+	    return FALSE;
+    *Elem = &Queue->Entry[Queue->Head];
+    return TRUE;
+}
+
+/*! \brief   Remove the first message from the MLME Queue
+ * 			WARNING: Must be call with Mlme.Queue.Lock held
+ *  \param  *Queue    The MLME Queue
+ *  \return  TRUE if a message was removed, FALSE if the queue was empty
+ *  \pre
+ *  \post
  */
 BOOLEAN MlmeDequeue(
-	IN MLME_QUEUE *Queue,
-	OUT MLME_QUEUE_ELEM **Elem)
+    IN MLME_QUEUE *Queue)
 {
+    if (Queue->Num == 0)
+	    return FALSE;
+    Queue->Head = (Queue->Head + 1) % MAX_LEN_OF_MLME_QUEUE;
+    Queue->Num--;
+    DBGPRINT(RT_DEBUG_INFO, "MlmeDequeue, num=%d\n",Queue->Num);
 
-	if (Queue->Num == 0)
-		return FALSE;
-
-	*Elem = &Queue->Entry[Queue->Head++];
-	Queue->Head %= MAX_LEN_OF_MLME_QUEUE;
-	Queue->Num--;
-	DBGPRINT(RT_DEBUG_INFO, "MlmeDequeue, num=%d\n",Queue->Num);
-
-	return TRUE;
+    return TRUE;
 }
 
 VOID MlmeRestartStateMachine(
 	IN	PRTMP_ADAPTER	pAd)
 {
-	DBGPRINT_RAW(RT_DEBUG_TRACE, "!!! MlmeRestartStateMachine !!!\n");
+	DBGPRINT(RT_DEBUG_TRACE, "!!! MlmeRestartStateMachine !!!\n");
 
 	RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_MLME_RESET_IN_PROGRESS);
 
@@ -3430,7 +3436,7 @@ VOID MlmePostRestartStateMachine(
 	while (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_MLME_RESET_IN_PROGRESS))
 		RTMPusecDelay(100000);
 
-	DBGPRINT_RAW(RT_DEBUG_TRACE, "!!! MlmePostRestartStateMachine !!!\n");
+	DBGPRINT(RT_DEBUG_TRACE, "!!! MlmePostRestartStateMachine !!!\n");
 
 	// Change back to original channel in case of doing scan
 	AsicSwitchChannel(pAd, pAd->PortCfg.Channel);

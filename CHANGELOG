@@ -23,6 +23,8 @@
  Changelog for 802.11g rt73 driver
 
  Version: CVS
+    * Forward compatibility for 2.6.24. Thanks to Adam Baker.
+    * Fix incomplete queue element, multi-context service drop fix.
 	* Provide interface name module option parameter.
 	* Load firmware for 2.4 kernels. Patch by Graham Gower.
 	  Back out problem queue element, multi-context changes till fixed.
