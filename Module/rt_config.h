@@ -36,6 +36,11 @@
 #ifndef	__RT_CONFIG_H__
 #define	__RT_CONFIG_H__
 
+// Propagate predefined compiler variables asap - bb.
+#if defined(__BIG_ENDIAN) || defined(__BIG_ENDIAN__) || defined(_BIG_ENDIAN)
+#define BIG_ENDIAN TRUE
+#endif /* __BIG_ENDIAN */
+
 #define PROFILE_PATH                "/etc/Wireless/RT73STA/rt73sta.dat"
 #define NIC_DEVICE_NAME             "RT73STA"
 #define RT2573_IMAGE_FILE_NAME      "rt73.bin"

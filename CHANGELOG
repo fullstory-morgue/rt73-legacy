@@ -23,6 +23,7 @@
  Changelog for 802.11g rt73 driver
 
  Version: CVS
+    * Fix big endian compiler variable propagation. Thanks to Adam Sjøgren.
     * Forward compatibility for 2.6.24. Thanks to Adam Baker.
     * Fix incomplete queue element, multi-context service drop fix.
 	* Provide interface name module option parameter.

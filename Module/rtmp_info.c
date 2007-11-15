@@ -3094,6 +3094,7 @@ INT rt73_ioctl(
 			Status = -EOPNOTSUPP;
 			break;
 		case RT_PRIV_IOCTL:
+		case RT_PRIV_IOCTL_WPA_SUPPLICANT:
 			subcmd = wrq->u.data.flags;
 			if( subcmd & OID_GET_SET_TOGGLE)
 				Status = RTMPSetInformation(pAd, rq, subcmd);
