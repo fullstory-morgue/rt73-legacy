@@ -40,12 +40,6 @@
 //
 //	Debug information verbosity: lower values indicate higher urgency
 //
-
-#ifdef __BIG_ENDIAN
-#warning "Big endian support is still experimental, use at your own risk."
-#define BIG_ENDIAN
-#endif
-
 #define RT_DEBUG_OFF		0
 #define RT_DEBUG_ERROR		1
 #define RT_DEBUG_WARN		2
