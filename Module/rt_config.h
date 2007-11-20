@@ -39,6 +39,7 @@
 // Propagate predefined compiler variables asap - bb.
 #if defined(__BIG_ENDIAN) || defined(__BIG_ENDIAN__) || defined(_BIG_ENDIAN)
 #define BIG_ENDIAN TRUE
+#warning "Big endian support is still experimental, use at your own risk."
 #endif /* __BIG_ENDIAN */
 
 #define PROFILE_PATH                "/etc/Wireless/RT73STA/rt73sta.dat"
@@ -276,6 +277,7 @@ static inline void msleep(unsigned long msecs)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24))
 #define SET_MODULE_OWNER(some_struct) do { } while (0)
 #define dev_get_by_name(slot_name) dev_get_by_name(&init_net, slot_name)
+#define first_net_device() first_net_device(&init_net)
 #endif
 
 #ifndef USB_ST_NOERROR
