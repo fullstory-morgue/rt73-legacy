@@ -1417,6 +1417,17 @@ static void rt73usb_write_bbp(const struct rt2x00_dev *rt2x00dev,
 	RTUSBWriteBBPRegister(rt2x00dev->pAd, word, data);
 }
 
+static void rt2500usb_read_rf(const struct rt2x00_dev *rt2x00dev,
+			     const unsigned int word, u32 *data)
+{
+	*data = 0;
+}
+
+static void rt2500usb_write_rf(const struct rt2x00_dev *rt2x00dev,
+			      const unsigned int word, u32 data)
+{
+}
+
 static const struct rt2x00debug rt73usb_rt2x00debug = {
 	.owner	= THIS_MODULE,
 	.csr	= {
@@ -1436,6 +1447,12 @@ static const struct rt2x00debug rt73usb_rt2x00debug = {
 		.write		= rt73usb_write_bbp,
 		.word_size	= sizeof(u8),
 		.word_count	= BBP_SIZE / sizeof(u8),
+	},
+	.rf	= {
+		.read		= rt73usb_read_rf,
+		.write		= rt73usb_write_rf,
+		.word_size	= sizeof(u32),
+		.word_count	= RF_SIZE / sizeof(u32),
 	},
 };
 
