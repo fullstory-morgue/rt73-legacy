@@ -1,8 +1,10 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20071120-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20071124-1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream release:
+    - fix 'make arm' target compile error.
+    - fix big endian PMAC_CSR12_STRUC definition.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 20 Nov 2007 01:36:18 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 24 Nov 2007 00:05:24 +0100
 
 rt73-legacy (0.0.0.dfsg.1+cvs20071120-1) unstable; urgency=low
 

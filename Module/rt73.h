@@ -861,7 +861,7 @@ typedef	union	_MAC_CSR12_STRUC	{
 		ULONG		CurrentPowerState:1;	// 0:sleep, 1:awake
 	}	field;
 	ULONG			word;
-}	PMAC_CSR12_STRUC, *PMAC_CSR12_STRUC;
+}	MAC_CSR12_STRUC, *PMAC_CSR12_STRUC;
 #else
 typedef	union	_MAC_CSR12_STRUC	{
 	struct	{
