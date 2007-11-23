@@ -1834,21 +1834,21 @@ VOID	RTMPMoveMemory(
 #ifdef RTMP_EMBEDDED
 	if(Length <= 8)
 	{
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
-		*(((PUCHAR)pDest)++) = *(((PUCHAR)pSrc)++);
+		*(PUCHAR)pDest++ = *(PUCHAR)pSrc++;
 		if(--Length == 0)	return;
 	}
 	else
