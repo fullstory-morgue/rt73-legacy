@@ -826,9 +826,13 @@ NDIS_STATUS	RTUSBWriteHWMACAddress(
 	StaMacReg1.field.Byte5 = pAd->CurrentAddress[5];
 	StaMacReg1.field.U2MeMask = 0xff;
 
-	DBGPRINT_RAW(RT_DEBUG_TRACE, "Local MAC = %02x:%02x:%02x:%02x:%02x:%02x\n",
-			pAd->CurrentAddress[0], pAd->CurrentAddress[1], pAd->CurrentAddress[2],
-			pAd->CurrentAddress[3], pAd->CurrentAddress[4], pAd->CurrentAddress[5]);
+	KPRINT(KERN_INFO, "Local MAC = %02x:%02x:%02x:%02x:%02x:%02x\n",
+		pAd->CurrentAddress[0], pAd->CurrentAddress[1], pAd->CurrentAddress[2],
+		pAd->CurrentAddress[3], pAd->CurrentAddress[4], pAd->CurrentAddress[5]);
+	DBGPRINT(RT_DEBUG_INFO, "- %s: Local MAC = %02x:%02x:%02x:%02x:%02x:%02x\n",
+		__FUNCTION__,
+		pAd->CurrentAddress[0], pAd->CurrentAddress[1], pAd->CurrentAddress[2],
+		pAd->CurrentAddress[3], pAd->CurrentAddress[4], pAd->CurrentAddress[5]);
 
 	RTUSBWriteMACRegister(pAd, MAC_CSR2, StaMacReg0.word);
 	RTUSBWriteMACRegister(pAd, MAC_CSR3, StaMacReg1.word);
@@ -865,7 +869,7 @@ VOID NICReadEEPROMParameters(
 
 	//Read MAC address.
 	RTUSBReadEEPROM(pAd, EEPROM_MAC_ADDRESS_BASE_OFFSET, pAd->PermanentAddress, MAC_ADDR_LEN);
-	DBGPRINT_RAW(RT_DEBUG_TRACE, "Local MAC = %02x:%02x:%02x:%02x:%02x:%02x\n",
+	DBGPRINT(RT_DEBUG_INFO, "- Local MAC = %02x:%02x:%02x:%02x:%02x:%02x\n",
 			pAd->PermanentAddress[0], pAd->PermanentAddress[1], pAd->PermanentAddress[2],
 			pAd->PermanentAddress[3], pAd->PermanentAddress[4], pAd->PermanentAddress[5]);
 
