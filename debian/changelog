@@ -1,8 +1,10 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20071124-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20071203-1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream release:
+    - Clean up info output.
+  * update to Standards-Version 3.7.3, no changes necessary.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 24 Nov 2007 00:07:35 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 03 Dec 2007 14:06:02 +0100
 
 rt73-legacy (0.0.0.dfsg.1+cvs20071124-1) unstable; urgency=low
 
