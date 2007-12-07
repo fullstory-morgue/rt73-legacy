@@ -23,6 +23,7 @@
  Changelog for 802.11g rt73 driver
 
  Version: CVS
+	* 2.6 kernels now use /etc/modprobe.d/ralink for module alias.
 	* Fix 'make arm' target compile error.
     * Fix big endian compiler variable propagation. Thanks to Adam Sjøgren.
     * Forward compatibility for 2.6.24. Thanks to Adam Baker.

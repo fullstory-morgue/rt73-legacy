@@ -1,8 +1,9 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20071203-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20071207-1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream release:
+    - 2.6 kernels now use /etc/modprobe.d/ralink for module alias.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 03 Dec 2007 14:07:27 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 07 Dec 2007 17:50:47 +0100
 
 rt73-legacy (0.0.0.dfsg.1+cvs20071203-1) unstable; urgency=low
 
