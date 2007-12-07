@@ -93,7 +93,7 @@ ifeq ($(PATCHLEVEL), 4)
  MODULE_CONF := /etc/modules.conf
 else
  MODULE_OBJECT := $(MODULE_NAME).ko
- MODULE_CONF := /etc/modprobe.conf
+ MODULE_CONF := /etc/modprobe.d/ralink
 endif
 
 all: module
@@ -147,7 +147,7 @@ clean:
 
 modules_install:
 	@if ! [ -f $(MODULE_OBJECT) ]; then \
-		echo "!!! $(MODULE_OBJECT) does not exit: run 'make'"; \
+		echo "!!! $(MODULE_OBJECT) does not exist: run 'make'"; \
 		exit 1; \
 	fi
 	@echo "*** Install module in $(MODULE_ROOT) ..."
@@ -155,21 +155,33 @@ ifeq ($(PATCHLEVEL),4)
 	install -m 755 -o 0 -g 0 -d $(MODULE_ROOT)
 	install -m 644 -o 0 -g 0 $(MODULE_OBJECT) $(MODULE_ROOT)
 else
-	$(MAKE) $(KBUILD_PARAMS) modules_install
+	@$(MAKE) $(KBUILD_PARAMS) modules_install
 endif
 	/sbin/depmod -a
 
 install: modules_install
 	@echo "*** Update $(MODULE_CONF) alias for $(IF_NAME)"; \
-	if ! grep -q '$(IF_NAME)' $(MODULE_CONF) ; then \
-		echo "alias $(IF_NAME) $(MODULE_NAME)" >> $(MODULE_CONF) ; \
+	if [ -d `dirname $(MODULE_CONF)` ]; then \
+		if [ -s $(MODULE_CONF) ]; then \
+			if ! grep -q '$(IF_NAME)' $(MODULE_CONF) ; then \
+				echo "alias $(IF_NAME) $(MODULE_NAME)" >> $(MODULE_CONF) ; \
+			fi; \
+		else \
+			echo "alias $(IF_NAME) $(MODULE_NAME)" >> $(MODULE_CONF) ; \
+		fi; \
+		if grep -q '$(OLD_IF_NAME)' $(MODULE_CONF) ; then \
+			echo "!!! -> $(OLD_IF_NAME) interface name is deprecated:" \
+						"remove old $(MODULE_CONF) alias"; \
+		fi; \
+	else \
+		echo "*** Config dir `dirname $(MODULE_CONF)` not found" >&2; \
 	fi
 	@echo "*** Install firmware in $(FIRM_DIR) ..."; \
 	if ! [ -d $(FIRM_DIR) ]; then \
 		mkdir $(FIRM_DIR); \
 	fi; \
 	cp -f $(FIRMWARES) $(FIRM_DIR)
-	@echo "*** Check config ..."; \
+	@echo "*** Check old config ..."; \
 	if [ -d $(CONFIG_DIR) ]; then \
 		echo "!!!"; \
 		echo "!!! WARNING: DEPRECATED CONFIG FOUND !"; \
@@ -182,10 +194,6 @@ install: modules_install
 		if [ -f $(CONFIG_DIR)/$(FIRMWARES) ]; then \
 			echo "!!! -> $(FIRMWARES) firmware has moved to $(FIRM_DIR)"; \
 		fi; \
-	fi; \
-	if grep -q '$(OLD_IF_NAME)' $(MODULE_CONF) ; then \
-		echo "!!! -> $(OLD_IF_NAME) interface name is deprecated:" \
-					"remove old $(MODULE_CONF) alias"; \
 	fi
 
 ifeq ($(PATCHLEVEL), 4)
