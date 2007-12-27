@@ -1,8 +1,10 @@
-rt73-legacy (0.0.0.dfsg.1+cvs20071207-2) UNRELEASED; urgency=low
+rt73-legacy (0.0.0.dfsg.1+cvs20071207-2) ORPHANED; urgency=low
 
   * NOT RELEASED YET
+  * ORPHAN PACKAGE, "rt73-source" has been switched to serialmonkey as
+    upstream and rt2x00 >= 2.0.13 is the better choice anyways.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 07 Dec 2007 17:52:44 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 27 Dec 2007 01:29:14 +0100
 
 rt73-legacy (0.0.0.dfsg.1+cvs20071207-1) unstable; urgency=low
 
